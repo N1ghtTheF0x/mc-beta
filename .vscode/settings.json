@@ -86,6 +86,8 @@
         "codecvt": "cpp",
         "filesystem": "cpp",
         "fstream": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "cstdarg": "cpp",
+        "random": "cpp"
     }
 }

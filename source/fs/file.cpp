@@ -31,7 +31,7 @@ namespace Minecraft
         unsigned char* data = stbi_load(p.c_str(),&width,&height,&channels,4);
         size_t pixelSize = 1 + ((width * height) * channels);
         for(size_t i = 0;i < pixelSize;i++)
-            d.push_back(data[i]/255.0f);
+            d.push_back(data[i]);
         stbi_image_free(data);
         return {d,width,height,channels};
     }

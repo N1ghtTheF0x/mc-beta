@@ -43,7 +43,7 @@ namespace Minecraft
             SDL_WINDOWPOS_CENTERED,
             WINDOW_WIDTH,
             WINDOW_HEIGHT,
-            SDL_WINDOW_OPENGL
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
         );
         if(mWindow == nullptr)
         {
@@ -67,6 +67,7 @@ namespace Minecraft
             exit(EXIT_FAILURE);
         }
         ImGui_ImplOpenGL3_Init();
+        glEnable(GL_DEPTH_TEST);
     }
     SDL_Window* Window::sdlWindow()
     {
@@ -90,7 +91,7 @@ namespace Minecraft
     void Window::clear()
     {
         glClearColor(0,0,0,0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     void Window::swap()
     {

@@ -37,12 +37,13 @@ namespace Minecraft::OpenGL
 
         void linkVertexAttributes() const;
     public:
+#ifdef _DEBUG
+        static void Editor(Mesh& mesh,const char* name,bool* enabled = (bool*)0);
+#endif
         Mesh(const VertexData &data,const IndexData &indices,GLenum usage);
         Mesh(const VertexData &data,const IndexData &indices);
-        ~Mesh();
 
-        void setTexture(size_t index,Texture& texture);
-        void setTexture(size_t index,std::filesystem::path path);
+        void addTexture(Texture* texture);
 
         void build() const;
         void bind() const;

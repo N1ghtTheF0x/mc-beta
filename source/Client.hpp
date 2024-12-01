@@ -8,6 +8,7 @@ namespace Minecraft
     class Client : public Instance
     {
     private:
+        float mDeltaTime = 0.0f;
         bool mRunning = true;
         void loop();
         void event();

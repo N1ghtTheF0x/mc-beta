@@ -35,6 +35,7 @@ endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
 add_subdirectory(glad)
 add_subdirectory(sdl2)
 add_subdirectory(imgui)
+add_subdirectory(glm)
 
 # find
 
@@ -52,8 +53,6 @@ execute_process(
 # configure
 
 configure_file(MinecraftConfig.hpp.in gen/MinecraftConfig.hpp)
-
-set(CMAKE_)
 
 # executable
 
@@ -77,12 +76,13 @@ add_executable(Minecraft main.cpp
     source/fs/File.hpp
     source/fs/file.cpp
 
-    source/math/Matrices.hpp
-    source/math/Quaternion.hpp
-    source/math/Vectors.hpp
+    source/math/Camera.hpp
+    source/math/camera.cpp
+    source/math/Color.hpp
+    source/math/math.cpp
 )
-target_link_libraries(Minecraft PRIVATE glad imgui SDL2 SDL2main ${OPENGL_LIBRARIES})
-target_include_directories(Minecraft PRIVATE imgui glad/include sdl2/include build/gen include ${OPENGL_INCLUDE_DIRS})
+target_link_libraries(Minecraft PRIVATE glad imgui SDL2 SDL2main ${OPENGL_LIBRARIES} glm)
+target_include_directories(Minecraft PRIVATE imgui glad/include sdl2/include build/gen include ${OPENGL_INCLUDE_DIRS} glm)
 if(WIN32)
     target_sources(Minecraft PRIVATE win32/icon.rc)
 endif()

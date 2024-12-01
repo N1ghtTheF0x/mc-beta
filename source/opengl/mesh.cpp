@@ -2,6 +2,10 @@
 #include "../fs/File.hpp"
 #include <cmath>
 
+#ifdef _DEBUG
+    #include <imgui.h>
+#endif
+
 namespace Minecraft::OpenGL
 {
     Mesh::Mesh(const VertexData &data,const IndexData &indices,GLenum usage): mData(data), mIndices(indices), mUsage(usage)
@@ -11,10 +15,6 @@ namespace Minecraft::OpenGL
     Mesh::Mesh(const VertexData &data,const IndexData &indices): Mesh(data,indices,GL_STATIC_DRAW)
     {
 
-    }
-    Mesh::~Mesh()
-    {
-        unload();
     }
     void Mesh::load()
     {
@@ -32,16 +32,10 @@ namespace Minecraft::OpenGL
     {
         glBindVertexArray(mVAO);
     }
-    void Mesh::setTexture(size_t index,Texture& texture)
+    void Mesh::addTexture(Texture* texture)
     {
-        texture.load();
-        mTextures.insert(mTextures.begin() + index,texture);
-    }
-    void Mesh::setTexture(size_t index,std::filesystem::path path)
-    {
-        Texture tex = FileSystem::readTexture(path);
-        tex.load();
-        setTexture(index,tex);
+        mTextures.push_back(texture);
+        texture->load();
     }
     void Mesh::build() const
     {
@@ -70,11 +64,11 @@ namespace Minecraft::OpenGL
     }
     void Mesh::draw(const Shader &shader)
     {
-        GLuint textureC = std::min((GLuint)mTextures.size(),(GLuint)GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+        GLuint textureC = std::min((GLuint)mTextures.size(),(GLuint)(GL_TEXTURE31 - GL_TEXTURE0));
         for(GLuint texture = 0;texture < textureC;texture++)
         {
-            Texture& tex = mTextures[texture];
-            tex.bind(texture);
+            Texture* tex = mTextures[texture];
+            tex->bind(texture);
         }
         shader.use();
         bind();
@@ -82,23 +76,62 @@ namespace Minecraft::OpenGL
     }
     Mesh Mesh::createCube()
     {
-        VertexData data;
-        IndexData indices;
-
-        // Front
-        VertexPayload front[] = {
-            {0.5f,0.5f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f}, // top-right
-            {0.5f,-0.5f,0.0f,1.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-right
-            {-0.5f,-0.5f,0.0f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-left
-            {-0.5f,0.5f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f} // top-left
+        VertexData data = {
+            // front
+            {0.5f,0.5f,-0.5f,1.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // top-right
+            {0.5f,-0.5f,-0.5f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-right
+            {-0.5f,-0.5f,-0.5f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-left
+            {-0.5f,0.5f,-0.5f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // top-left
+            // back
+            {0.5f,0.5f,0.5f,1.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // top-right
+            {0.5f,-0.5f,0.5f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-right
+            {-0.5f,-0.5f,0.5f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f}, // bottom-left
+            {-0.5f,0.5f,0.5f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f}, // top-left
         };
-        IndexPayload frontI[] = {
-            {0,1,3},
-            {1,2,3}
+        IndexData indices = {
+            {0,4,3}, // Right
+            {4,5,6},
+            {0,1,3}, // Front
+            {1,2,3},
+            {4,5,7}, // Back
+            {5,6,7}
         };
-        data.append_range(front);
-        indices.append_range(frontI);
 
         return {data,indices};
     }
+#ifdef _DEBUG
+    void Mesh::Editor(Mesh& mesh,const char* name,bool* enabled)
+    {
+        ImGui::Begin(name,enabled);
+            if(ImGui::Button("Build"))
+                mesh.build();
+            if(ImGui::CollapsingHeader("Vertex Data"))
+            for(size_t i = 0;i < mesh.mData.size();i++)
+            {
+                ImGui::PushID(i);
+                    VertexPayload& vertex = mesh.mData.at(i);
+                    ImGui::InputFloat3("Position",vertex.p);
+                    ImGui::InputFloat2("UV",vertex.tex);
+                    ImGui::ColorEdit4("Color",vertex.color);
+                ImGui::PopID();
+            }
+            if(ImGui::CollapsingHeader("Index Data"))
+            for(size_t i = 0;i < mesh.mIndices.size();i++)
+            {
+                ImGui::PushID(i);
+                std::string idx = std::to_string(i);
+                if(ImGui::TreeNode(idx.c_str()))
+                {
+                    IndexPayload& index = mesh.mIndices.at(i);
+                    ImGui::InputScalar("X",ImGuiDataType_U32,&index.x);
+                    ImGui::InputScalar("Y",ImGuiDataType_U32,&index.y);
+                    ImGui::InputScalar("Z",ImGuiDataType_U32,&index.z);
+                    ImGui::TreePop();
+                }
+                ImGui::PopID();
+            }
+            Texture::EditorContent(mesh.mTextures);
+        ImGui::End();
+    }
+#endif
 }
