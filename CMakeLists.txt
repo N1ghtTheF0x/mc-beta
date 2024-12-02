@@ -65,6 +65,9 @@ add_executable(Minecraft main.cpp
     source/window.cpp
     source/Window.hpp
 
+    source/input.cpp
+    source/Input.hpp
+
     source/opengl/OpenGL.hpp
     source/opengl/Shader.hpp
     source/opengl/shader.cpp
@@ -80,6 +83,16 @@ add_executable(Minecraft main.cpp
     source/math/camera.cpp
     source/math/Color.hpp
     source/math/math.cpp
+
+    source/interfaces/IEditable.hpp
+    source/interfaces/IMesh.hpp
+    source/interfaces/IRenderer.hpp
+    source/interfaces/IShader.hpp
+    source/interfaces/ITexture.hpp
+
+    source/assets/Asset.hpp
+    source/assets/AssetManager.hpp
+    source/assets/assetman.cpp
 )
 target_link_libraries(Minecraft PRIVATE glad imgui SDL2 SDL2main ${OPENGL_LIBRARIES} glm)
 target_include_directories(Minecraft PRIVATE imgui glad/include sdl2/include build/gen include ${OPENGL_INCLUDE_DIRS} glm)

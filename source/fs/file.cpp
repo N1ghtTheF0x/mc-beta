@@ -22,7 +22,7 @@ namespace Minecraft
         }
         return str;
     }
-    OpenGL::Texture FileSystem::readTexture(std::filesystem::path path)
+    OpenGL::TexturePtr FileSystem::readTexture(std::filesystem::path path)
     {
         OpenGL::TextureData d;
         std::string p = path.string();
@@ -33,6 +33,6 @@ namespace Minecraft
         for(size_t i = 0;i < pixelSize;i++)
             d.push_back(data[i]);
         stbi_image_free(data);
-        return {d,width,height,channels};
+        return MAKE_ASSET(OpenGL::Texture,d,width,height,channels);
     }
 }

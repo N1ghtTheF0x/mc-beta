@@ -76,6 +76,10 @@ namespace Minecraft::OpenGL
         use();
         glUniform4f(glGetUniformLocation(mProgram,uniform.c_str()),x,y,z,w);
     }
+    void Shader::set(std::string uniform,glm::vec4 vec)
+    {
+        set(uniform,vec.x,vec.y,vec.z,vec.w);
+    }
     void Shader::set(std::string uniform,Math::Color color)
     {
         set(uniform,color.red,color.green,color.blue,color.alpha);
@@ -144,6 +148,12 @@ namespace Minecraft::OpenGL
         float v[3];
         getFloat(uniform,v);
         return {v[0],v[1],v[2]};
+    }
+    glm::vec4 Shader::getVector4(std::string uniform) const
+    {
+        float v[4];
+        getFloat(uniform,v);
+        return {v[0],v[1],v[2],v[3]};
     }
     glm::mat3 Shader::getMat3(std::string uniform) const
     {

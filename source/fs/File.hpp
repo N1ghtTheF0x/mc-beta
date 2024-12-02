@@ -8,7 +8,7 @@
 namespace Minecraft::FileSystem
 {
     std::string readFile(std::filesystem::path path);
-    OpenGL::Texture readTexture(std::filesystem::path path);
+    OpenGL::TexturePtr readTexture(std::filesystem::path path);
 }
 
 #endif

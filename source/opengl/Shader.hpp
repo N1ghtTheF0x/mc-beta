@@ -27,6 +27,7 @@ namespace Minecraft::OpenGL
         void use() const;
         void set(std::string uniform,GLfloat x,GLfloat y,GLfloat z,GLfloat w);
         void set(std::string uniform,Math::Color color);
+        void set(std::string uniform,glm::vec4 vec);
         void set(std::string uniform,GLfloat x,GLfloat y,GLfloat z);
         void set(std::string uniform,glm::vec3 vec);
         void set(std::string uniform,GLfloat x,GLfloat y);
@@ -40,6 +41,7 @@ namespace Minecraft::OpenGL
         void getInt(std::string uniform,GLuint* ptr) const;
         glm::vec2 getVector2(std::string uniform) const;
         glm::vec3 getVector3(std::string uniform) const;
+        glm::vec4 getVector4(std::string uniform) const;
         glm::mat3 getMat3(std::string uniform) const;
         glm::mat4 getMat4(std::string uniform) const;
         Math::Color getColor(std::string uniform) const;

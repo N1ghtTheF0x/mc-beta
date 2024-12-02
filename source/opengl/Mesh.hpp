@@ -1,6 +1,7 @@
 #ifndef __MINECRAFT_OPENGL_MESH_HPP
 #define __MINECRAFT_OPENGL_MESH_HPP
 
+#include "../assets/Asset.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 
@@ -24,7 +25,8 @@ namespace Minecraft::OpenGL
         GLuint z;
     };
     typedef std::vector<IndexPayload> IndexData;
-    class Mesh
+    DECLARE_ASSET(Mesh)
+    class Mesh : public Asset
     {
     private:
         GLenum mUsage;
@@ -38,17 +40,20 @@ namespace Minecraft::OpenGL
         void linkVertexAttributes() const;
     public:
 #ifdef _DEBUG
-        static void Editor(Mesh& mesh,const char* name,bool* enabled = (bool*)0);
+        static void Editor(MeshPtr& mesh,const char* name,bool* enabled = (bool*)0);
+        static void EditorContent(MeshPtr& mesh);
 #endif
         Mesh(const VertexData &data,const IndexData &indices,GLenum usage);
         Mesh(const VertexData &data,const IndexData &indices);
 
-        void addTexture(Texture* texture);
+        virtual void load() override;
+        virtual void unload() override;
+        Asset::Type type() const override;
+
+        TexturePtr& addTexture(TexturePtr& texture);
 
         void build() const;
         void bind() const;
-        void load();
-        void unload() const;
         void draw(const Shader &shader);
 
         static Mesh createCube();

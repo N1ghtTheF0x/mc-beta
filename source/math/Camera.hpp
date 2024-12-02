@@ -11,7 +11,8 @@ namespace Minecraft::Math
         glm::vec3 mPosition;
         glm::vec3 mFront;
         glm::vec3 mUp;
-        float mSpeedXY;
+        float mYaw;
+        float mPitch;
     public:
         static const glm::vec3 FRONT;
         static const glm::vec3 UP;
@@ -22,10 +23,13 @@ namespace Minecraft::Math
         Camera(glm::vec3 position);
         Camera(float x,float y,float z);
         glm::vec3 position() const;
+        float yaw() const;
+        float pitch() const;
         void setPosition(glm::vec3 move);
         void setPosition(float x,float y,float z);
-        void look(glm::vec3 look);
-        void look(float yaw,float pitch,float roll);
+        void setPitch(float pitch);
+        void setYaw(float yaw);
+        void update();
         void lookUp(float speed);
         void lookDown(float speed);
         void lookLeft(float speed);
@@ -33,7 +37,9 @@ namespace Minecraft::Math
         glm::mat4 view() const;
         void moveLeft(float speed);
         void moveRight(float speed);
+        void moveTowards(float speed);
         void moveForward(float speed);
+        void moveAway(float speed);
         void moveBackwards(float speed);
         void moveUp(float speed);
         void moveDown(float speed);

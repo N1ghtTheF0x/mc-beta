@@ -26,6 +26,14 @@ namespace Minecraft::Math
     {
         return mPosition;
     }
+    float Camera::yaw() const
+    {
+        return mYaw;
+    }
+    float Camera::pitch() const
+    {
+        return mPitch;
+    }
     void Camera::setPosition(glm::vec3 position)
     {
         mPosition = position;
@@ -34,33 +42,37 @@ namespace Minecraft::Math
     {
         mPosition = {x,y,z};
     }
-    void Camera::look(glm::vec3 look)
+    void Camera::setYaw(float yaw)
     {
-        this->look(look.x,look.y,look.z);
+        mYaw = yaw;
     }
-    void Camera::look(float yaw,float pitch,float roll)
+    void Camera::setPitch(float pitch)
+    {
+        mPitch = pitch;
+    }
+    void Camera::update()
     {
         mFront = glm::normalize(glm::vec3(
-            std::cos(glm::radians(yaw)) * std::cos(glm::radians(pitch)),
-            std::sin(glm::radians(pitch)),
-            std::sin(glm::radians(yaw)) * std::cos(glm::radians(pitch))
+            std::cos(glm::radians(mYaw)) * std::cos(glm::radians(mPitch)),
+            std::sin(glm::radians(mPitch)),
+            std::sin(glm::radians(mYaw)) * std::cos(glm::radians(mPitch))
         ));
     }
     void Camera::lookLeft(float speed)
     {
-        look(speed,0,0);
+        mYaw -= speed;
     }
     void Camera::lookRight(float speed)
     {
-        look(-speed,0,0);
+        mYaw += speed;
     }
     void Camera::lookUp(float speed)
     {
-        look(0,speed,0);
+        mPitch += speed;
     }
     void Camera::lookDown(float speed)
     {
-        look(0,-speed,0);
+        mPitch -= speed;
     }
     glm::mat4 Camera::view() const
     {
@@ -70,11 +82,19 @@ namespace Minecraft::Math
             mUp
         );
     }
-    void Camera::moveForward(float speed)
+    void Camera::moveTowards(float speed)
     {
         mPosition += speed * mFront;
     }
+    void Camera::moveForward(float speed)
+    {
+        
+    }
     void Camera::moveBackwards(float speed)
+    {
+        
+    }
+    void Camera::moveAway(float speed)
     {
         mPosition -= speed * mFront;
     }
@@ -99,7 +119,11 @@ namespace Minecraft::Math
     {
         ImGui::Begin(name,enabled);
             glm::f32* position = glm::value_ptr(camera.mPosition);
+            glm::f32* front = glm::value_ptr(camera.mFront);
             ImGui::InputFloat3("Position",position);
+            ImGui::InputFloat3("Front",front);
+            ImGui::InputFloat("Yaw",&camera.mYaw);
+            ImGui::InputFloat("Pitch",&camera.mPitch);
         ImGui::End();
     }
 #endif
